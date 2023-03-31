@@ -1,5 +1,3 @@
-"""This module contains the implementation of the SET command logic."""
-
 import threading
 import time
 from typing import Tuple
@@ -38,11 +36,12 @@ class Datastore:
                 return 400, "key already exists"
             if condition == "XX" and key not in self.data:
                 return 400, "key does not exist"
-        
+
             self.data[key] = value
 
             if expiry_time:
-                timer = threading.Timer(expiry_time, self._delete_key, args=[key])
+                timer = threading.Timer(
+                    expiry_time, self._delete_key, args=[key])
                 timer.start()
             return 200, "Value set successfully"
 
@@ -114,7 +113,7 @@ class Datastore:
             str: The next value in the queue, or None if the queue is empty.
         """
         if key not in self.queues:
-            return {'error':'key not found'}, 404
+            return {'error': 'key not found'}, 404
 
         queue = self.queues[key]
 

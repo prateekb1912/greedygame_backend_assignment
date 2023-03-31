@@ -7,11 +7,12 @@ app = Flask(__name__)
 
 store = Datastore()
 
+
 @app.route('/', methods=['POST'])
 def index():
     try:
-        input = json.loads(request.get_data())
-        cmd = input.get('command')
+        req_data = json.loads(request.get_data())
+        cmd = req_data.get('command')
 
         if not cmd:
             return {'error': 'dsssd'}
@@ -31,7 +32,7 @@ def index():
                     expiry_time = int(parts[4])
                 else:
                     condition = parts[-1]
-            
+
             resp = store.set(key, value, expiry_time, condition)
 
             code = resp[0]
@@ -41,15 +42,15 @@ def index():
                 return jsonify({'error': message}), 400
 
             return jsonify({'success': message}), 200
-        
+
         if cmd_type == 'GET':
             val = store.get(key)
 
             if val is None:
                 return jsonify({'error': 'key not found'}), 404
-            
+
             return jsonify({'value': val}), 200
-        
+
         if cmd_type == 'QPUSH':
             vals = parts[2:]
 
@@ -60,7 +61,7 @@ def index():
         if cmd_type == 'QPOP':
             resp, code = store.qpop(key)
 
-            return jsonify(resp),code
+            return jsonify(resp), code
 
         if cmd_type == 'BQPOP':
             timeout = int(parts[2])
@@ -71,7 +72,7 @@ def index():
 
         else:
             return jsonify({'error': 'Invalid command.'}), 400
- 
+
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 500
