@@ -93,13 +93,15 @@ class Datastore:
         with self.lock:
 
             if key not in self.queues:
-                return "queue not found"
+                return {"error": "queue not found"}, 404
 
             queue = self.queues[key]
             if len(queue) == 0:
-                return "queue is empty"
+                return {"error": "queue is empty"}, 400
 
-            return queue.pop(0)
+            value = queue.pop(0)
+
+            return {"value": value}, 200
 
     def bqpop(self, key, timeout):
         """

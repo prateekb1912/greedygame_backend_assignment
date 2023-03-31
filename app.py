@@ -58,12 +58,9 @@ def index():
             return jsonify({'success': 'Values added to queue'}), 200
 
         if cmd_type == 'QPOP':
-            val = store.qpop(key)
+            resp, code = store.qpop(key)
 
-            if type(val) == str:
-                return jsonify({'error': val}), 404
-
-            return jsonify({'value': val}), 200
+            return jsonify(resp),code
 
         if cmd_type == 'BQPOP':
             timeout = int(parts[2])
